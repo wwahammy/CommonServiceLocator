@@ -1,0 +1,126 @@
+#product-info {
+    product-name: "CommonServiceLocator";
+    version: "1";
+    original-source-location: "git@github.com:ericschultz/CommonServiceLocator.git";
+    original-source-website: "https://github.com/ericschultz/CommonServiceLocator";
+    license: "MSPL";
+    packager: "Eric Schultz <wwahammy@gmail.com>";
+}
+
+release { 
+    // builds the binaries in "Release" mode but does not sign them.
+    set : cfg = "Release";
+    uses : {
+        anycpu 
+    };
+    
+    build-command: @"echo build done.";
+}
+
+test
+{
+build-command: @"echo no tests.";
+}
+debug {
+    // builds binaries in debug mode
+    default: false;
+    set : cfg = "Debug";
+    uses : {
+        anycpu 
+    };
+    
+    build-command: @"echo build done.";
+}
+
+package {
+    uses: sign;
+    build-command: @"autopackage.exe COPKG\*.autopkg";
+}
+
+sign { 
+    // builds all the binaries in "Release" mode and digitally signs and 
+    // strong-names the binaries.
+    // 
+    default: false;
+    set : cfg = "Release";
+    uses : {
+		release,
+        sign-binaries
+    };
+        
+    
+    build-command: @"echo built singed binaries. done.";
+}
+
+
+
+sign-binaries {
+    set : release_dir = @"main\Microsoft.Practices.ServiceLocation\bin\Release";
+    
+    default: false;
+    
+    uses: {
+        anycpu
+    };
+    
+    targets: {
+    };
+    
+    build-command: @"
+        REM sign files in release directory
+        simplesigner --sign --strong-name ""out\**.dll"" 
+        
+        
+        REM Everything went ok!
+        exit /b 0
+        
+        REM Something not ok :(
+        :failed
+        echo ERROR: Failure in script. aborting.
+        exit /b 1
+    ";
+}
+
+package 
+{
+	build-command: @"autopackage.exe COPKG\*.autopkg";
+}
+
+
+anycpu {
+    default: no;
+    platform : x86;
+    compiler: vc10;
+    
+    uses: clean;
+    set : release_dir = @"main\Microsoft.Practices.ServiceLocation\bin\Release";
+    targets: { 
+        @"main\Microsoft.Practices.ServiceLocation\bin\${cfg}\Microsoft.Practices.ServiceLocation.dll",
+       
+
+    };
+
+    build-command: @"
+        msbuild  /p:Configuration=${cfg} ""/p:Platform=Any CPU""  ""main\Microsoft.Practices.ServiceLocation.sln"" || goto failed
+    
+		xcopy /Q /D /Y  ""main\Microsoft.Practices.ServiceLocation\bin\${cfg}\Microsoft.Practices.ServiceLocation.dll""  ""out""  || goto failed
+        REM Everything went ok!
+        exit /b 0
+        
+        REM Something not ok :(
+        :failed
+        echo ERROR: Failure in script. aborting.
+        exit /b 1
+    ";
+  
+}
+
+clean {
+    default: no;
+    
+    clean-command: @"
+        rmdir /s /q out > nul 2>&1
+        for /d %%v in (*) do if exist %%v\obj rmdir /s /q %%v\obj        
+        for /d %%v in (*) do if exist %%v\bin rmdir /s /q %%v\bin
+    ";
+}

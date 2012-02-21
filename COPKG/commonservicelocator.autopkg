@@ -1,0 +1,42 @@
+
+
+package {
+	name: "CommonLocationsService";
+    display-name: "Common Locations Service";
+    location: "http://coapp.org/repository/${OutputFilename}";
+    feed: "http://coapp.org/repository/packages.atom.xml";
+    publisher: "CoApp Project";
+}
+
+metadata {
+    licenses : {
+        MSPL
+    };
+    
+    summary: "Common Locations Service";
+	author-version : "1.0";
+}
+
+files[dlls] {
+    root: "..\out";
+	include: {
+        "Microsoft.Practices.ServiceLocation.dll",
+    };
+	
+	trim-path: minimal;
+}
+
+assemblies {
+    include : {
+      dlls
+    };
+}
+
+developer-library[refassms] {
+    reference-assemblies : {
+        dlls
+    };
+}
+
+
+
