@@ -68,7 +68,7 @@ sign-binaries {
     
     build-command: @"
         REM sign files in release directory
-        simplesigner --sign --strong-name ""out\**.dll"" --certificate-path=EricTest.pfx --password=j --remember
+        simplesigner --sign --strong-name ""out\**.dll""
         
         
         REM Everything went ok!
