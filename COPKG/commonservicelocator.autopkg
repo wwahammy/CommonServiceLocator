@@ -1,8 +1,6 @@
-
-
 package {
-	name: "CommonLocationsService";
-    display-name: "Common Locations Service";
+	name: "CommonServiceLocator";
+    display-name: "CommonServiceLocator";
     location: "http://coapp.org/repository/${OutputFilename}";
     feed: "http://coapp.org/repository/packages.atom.xml";
     publisher: "CoApp Project";
@@ -32,10 +30,12 @@ assemblies {
     };
 }
 
-developer-library[refassms] {
-    reference-assemblies : {
-        dlls
-    };
+developer-library[dlls] {
+	reference-assemblies:
+	{
+	dlls
+	};
+    
 }
 
 

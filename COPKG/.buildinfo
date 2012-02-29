@@ -19,7 +19,7 @@ release {
 
 test
 {
-build-command: @"echo no tests.";
+	build-command: @"echo no tests.";
 }
 debug {
     // builds binaries in debug mode
@@ -68,7 +68,7 @@ sign-binaries {
     
     build-command: @"
         REM sign files in release directory
-        simplesigner --sign --strong-name ""out\**.dll"" 
+        simplesigner --sign --strong-name ""out\**.dll"" --certificate-path=EricTest.pfx --password=j --remember
         
         
         REM Everything went ok!
@@ -83,7 +83,11 @@ sign-binaries {
 
 package 
 {
-	build-command: @"autopackage.exe COPKG\*.autopkg";
+	default: false;
+	build-command: @"
+		cd copkg
+        autopackage coapp.devtools.autopkg  || goto failed
+        echo Done Packaging!";
 }
 
 
